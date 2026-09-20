@@ -1,0 +1,24 @@
+# OS & Editor files
+.DS_Store
+Thumbs.db
+desktop.ini
+*.lnk
+
+# Audio files (large binary assets — add manually if needed)
+*.mp3
+*.wav
+*.ogg
+
+# IDE / Editor configs
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.bak
+*~

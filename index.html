@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deadlock Management System - OS Project</title>
+    <link rel="stylesheet" href="intro.css">
+    <link rel="stylesheet" href="rag.css">
+    <link rel="stylesheet" href="banker.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Title Bar -->
+    <div class="title-bar">
+        <!-- <div class="title-text">DEADLOCK MANAGEMENT SYSTEM</div> -->
+    </div>
+
+    <div id="pageBoundary" class="page-boundary">
+        <div class="page-border top"></div>
+        <div class="page-border right"></div>
+        <div class="page-border bottom"></div>
+        <div class="page-border left"></div>
+    </div>
+
+    <div class="main-container">
+        <!-- Left Panel - Process Information (Only for RAG tab) -->
+        <div class="left-panel" id="leftPanel">
+            <!-- Process Information -->
+            <div class="panel-section">
+                <h3><i class="fas fa-microchip"></i> PROCESS INFORMATION</h3>
+                <table class="process-table">
+                    <thead>
+                        <tr>
+                            <th>Process</th>
+                            <th>Allocated</th>
+                            <th>Requesting</th>
+                            <th>State</th>
+                        </tr>
+                    </thead>
+                    <tbody id="processTableBody">
+                        <!-- Filled by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Resource Information -->
+            <div class="resource-info">
+                <h3><i class="fas fa-database"></i> RESOURCE INFORMATION</h3>
+                <table class="resource-table">
+                    <thead>
+                        <tr>
+                            <th>Resource</th>
+                            <th>Total</th>
+                            <th>Available</th>
+                            <th>Allocated</th>
+                            <th>Waiting</th>
+                        </tr>
+                    </thead>
+                    <tbody id="resourceTableBody">
+                        <!-- Filled by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- RAG Controls -->
+            <div class="panel-section" style="margin-top: 20px;">
+                <h3><i class="fas fa-sliders-h"></i> GRAPH CONTROLS</h3>
+                <div class="control-buttons">
+                    <div class="simulation-inputs" style="grid-template-columns: 1fr 1fr; margin-bottom: 15px;">
+                        <div class="input-group">
+                            <label>Processes(Max 8):</label>
+                            <input type="number" id="processCount" value="3" min="1" max="8">
+                        </div>
+                        <div class="input-group">
+                            <label>Resources(Max 6):</label>
+                            <input type="number" id="resourceCount" value="2" min="1" max="6">
+                        </div>
+                    </div>
+                    <button class="neon-button" onclick="applyConfiguration()">
+                        <i class="fas fa-cog"></i> Apply Configuration
+                    </button>
+                    <button class="neon-button" onclick="addProcess()">
+                        <i class="fas fa-plus-circle"></i> Add Process
+                    </button>
+                    <button class="neon-button" onclick="addResource()">
+                        <i class="fas fa-plus-square"></i> Add Resource
+                    </button>
+                    <button class="neon-button" onclick="clearEdges()">
+                        <i class="fas fa-trash"></i> Clear Edges
+                    </button>
+<!-- 
+<button class="neon-button" onclick="detectDeadlock()" data-sound="none">
+                        <i class="fas fa-search"></i> Detect Deadlock
+                    </button>
+-->
+                </div>
+            </div>
+
+            <!-- Scenarios -->
+            <div class="panel-section">
+                <h3><i class="fas fa-vial"></i> PREDEFINED SCENARIOS</h3>
+                <div class="control-buttons">
+                    <button class="neon-button" onclick="loadScenario('no-deadlock')" data-sound="none">
+                        <i class="fas fa-check-circle"></i> No Deadlock
+                    </button>
+                    <button class="neon-button" onclick="loadScenario('single-cycle')" data-sound="none">
+                        <i class="fas fa-exclamation-circle"></i> Single Cycle
+                    </button>
+                    <button class="neon-button" onclick="loadScenario('multiple-cycles')" data-sound="none">
+                        <i class="fas fa-radiation"></i> Multiple Cycles
+                    </button>
+                </div>
+            </div>
+
+            <!-- Deadlock Resolution -->
+            <div class="panel-section">
+                <h3><i class="fas fa-first-aid"></i> DEADLOCK RESOLUTION</h3>
+                <div class="control-buttons">
+                    <button class="neon-button" onclick="suggestResolution()" data-sound="none">
+                        <i class="fas fa-lightbulb"></i> Suggest Resolution
+                    </button>
+                    <button class="neon-button" style="background: linear-gradient(180deg, #ff3333, #cc0000);" 
+                            onclick="breakDeadlock()" data-sound="none">
+                        <i class="fas fa-hammer"></i> Break Deadlock
+                    </button>
+                </div>
+                <div id="resolutionInfo" class="log-content" style="height: 80px; margin-top: 10px; font-size: 11px;"></div>
+            </div>
+        </div>
+
+        <!-- Center Panel - Graph / Banker's -->
+        <div class="center-panel">
+            <!-- Tab Navigation -->
+            <!-- <div class="tabs">
+                <button class="tab active" data-tab="rag">
+                    <i class="fas fa-project-diagram"></i> Resource Allocation Graph
+                </button>
+                <button class="tab" data-tab="bankers">
+                    <i class="fas fa-calculator"></i> Banker's Algorithm
+                </button>
+            </div> -->
+
+            <!-- RAG Content -->
+            <div class="tab-content active" id="rag-tab">
+                <div class="graph-container">
+                    <!-- Edge Creation Info -->
+                    <div class="edge-info">
+                        <i class="fas fa-info-circle"></i>
+                        <span>Select process & resource from right panel, then click Request/Release</span>
+                    </div>
+                    
+                    <div class="graph-circle" id="graphCircle">
+                        <!-- Nodes will be positioned here by JavaScript -->
+                        <svg id="edgesSVG" width="600" height="600"></svg>
+                        
+                        <!-- RAG Circle Glow -->
+                        <div class="circle-glow-container">
+                            <div class="circle-glow"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Status Strip -->
+                    <div class="status-strip" id="statusStrip">
+                        <div class="status-text" id="statusText">
+                            <i class="fas fa-shield-alt"></i> SYSTEM STATE: SAFE
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Banker's Algorithm Content -->
+            <div class="tab-content" id="bankers-tab">
+                <div class="banker-container">
+                    <h3><i class="fas fa-calculator"></i> Banker's Algorithm Configuration</h3>
+                    
+                    <!-- Banker's Controls -->
+                    <div class="banker-controls">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                            <div class="input-group">
+                                <label>Processes(Max 10):</label>
+                                <input type="number" id="bankerProcessCount" value="3" min="1" max="10">
+                            </div>
+                            <div class="input-group">
+                                <label>Resources(Max 5):</label>
+                                <input type="number" id="bankerResourceCount" value="2" min="1" max="5">
+                            </div>
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+                            <button class="neon-button" onclick="applyBankerConfig()">
+                                <i class="fas fa-cog"></i> Apply Configuration
+                            </button>
+                            <button class="neon-button" style="background: linear-gradient(180deg, #b967ff, #8a2be2);" 
+                                    onclick="showExampleSelection()">
+                                <i class="fas fa-vial"></i> Load Example
+                            </button>
+                        </div>
+
+			<!-- Banker's Algorithm Actions -->
+                    	<div style="margin-top: 30px; display: flex; gap: 15px; justify-content: center; flex-				wrap: wrap;">
+                        <button class="neon-button" onclick="calculateNeed()">
+                            <i class="fas fa-calculator"></i> Calculate Need
+                        </button>
+                        <button class="neon-button" onclick="checkSafetyWithExplanations()">
+                            <i class="fas fa-shield-alt"></i> Run Safety Algorithm
+                        </button>
+			<button class="neon-button" id="toggleRequestBtn" style="background: linear-						gradient(135deg, var(--cyber-green), #006633);">
+            			<i class="fas fa-hand-paper"></i> Show Request Algorithm
+        		</button>
+                     </div>
+                    </div>
+                    
+                    <!-- Available Resources -->
+                    <div style="margin: 20px 0;">
+                        <h4 style="color: #00ffff; margin-bottom: 10px;">
+                            <i class="fas fa-box-open"></i> Available Resources
+                        </h4>
+                        <div id="bankerResources" class="resource-inputs" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px;"></div>
+                    </div>
+                    
+                    <!-- Matrices -->
+                    <div class="matrix-container" style="overflow-x: auto;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px;">
+                            <!-- Allocation Matrix -->
+                            <div style="min-width: 300px;">
+                                <h4 style="color: white; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
+                                    <i class="fas fa-th-list"></i> Allocation Matrix
+                                </h4>
+                                <div id="allocationMatrix"></div>
+                            </div>
+                            
+                            <!-- Max Matrix -->
+                            <div style="min-width: 300px;">
+                                <h4 style="color: white; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
+                                    <i class="fas fa-chart-bar"></i> Max Matrix
+                                </h4>
+                                <div id="maxMatrix"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Need Matrix -->
+                        <div style="margin-top: 20px;">
+                            <h4 style="color: white; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
+                                <i class="fas fa-calculator"></i> Need Matrix (Max - Allocation)
+                            </h4>
+                            <div id="needMatrix"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Step Visualization Section -->
+                    <div class="step-visualization" style="margin-top: 30px; background: var(--cyber-panel); border: 2px solid var(--cyber-blue); border-radius: 10px; padding: 20px;">
+                        <h3 style="color: var(--cyber-blue); margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                            <i class="fas fa-list-ol"></i> Step-by-Step Visualization
+                        </h3>
+                        
+                        <!-- Calculation Display -->
+                        <div class="calculation-display" id="calculationDisplay" style="background: rgba(0, 0, 0, 0.5); border: 2px solid var(--cyber-purple); border-radius: 10px; padding: 15px; margin: 20px 0;">
+                            <h4 style="color: var(--cyber-purple); margin-bottom: 10px; font-family: 'Orbitron', monospace; display: flex; align-items: center; justify-content: space-between;">
+                                <span>
+                                    <i class="fas fa-calculator"></i> Algorithm Calculations
+                                </span>
+                            </h4>
+                            
+                            <!-- Current Calculation -->
+                            <div class="current-calculation" id="currentCalculation" style="margin-bottom: 15px; padding: 10px; background: rgba(185, 103, 255, 0.1); border-radius: 5px; border-left: 3px solid var(--cyber-purple);">
+                                <div style="color: var(--cyber-blue); font-size: 12px; margin-bottom: 5px; display: flex; align-items: center; gap: 5px;">
+                                    <i class="fas fa-bolt"></i> Current Calculation
+                                </div>
+                                <div id="calcFormula" style="font-family: 'Courier New', monospace; font-size: 14px; color: var(--cyber-yellow); min-height: 20px;">
+                                    <!-- Formula will be shown here -->
+                                </div>
+                            </div>
+                            
+                            <!-- Value Changes -->
+                            <div class="value-changes-section" id="valueChangesSection" style="margin-top: 15px;">
+                                <div style="color: var(--cyber-green); font-size: 12px; margin-bottom: 5px; display: flex; align-items: center; gap: 5px;">
+                                    <i class="fas fa-exchange-alt"></i> Value Changes
+                                </div>
+                                <div id="calcValueChanges" style="font-size: 11px; color: var(--cyber-orange); line-height: 1.3;">
+                                    <!-- Value changes will be shown here -->
+                                </div>
+                            </div>
+                            
+                            <!-- Work Vector -->
+                            <div class="work-vector-section" style="margin-top: 15px; border-top: 1px solid rgba(0, 255, 255, 0.2); padding-top: 10px;">
+                                <div style="color: var(--cyber-green); font-size: 12px; margin-bottom: 5px; display: flex; align-items: center; gap: 5px; justify-content: space-between;">
+                                    <span>
+                                        <i class="fas fa-vector-square"></i> Work Vector
+                                    </span>
+                                    <span id="workVectorStatus" style="font-size: 10px; color: #aaa;">Initial</span>
+                                </div>
+                                <div class="work-values" id="workValues" style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; font-family: 'Courier New', monospace; font-size: 14px; color: white;">
+                                    <!-- Work values will be shown here -->
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Step Controls -->
+                        <div id="stepControls" class="step-controls" style="background: rgba(13, 27, 62, 0.9); border: 2px solid var(--cyber-blue); border-radius: 10px; padding: 20px; margin: 20px 0; box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);">
+                            <!-- Controls will be inserted here -->
+                        </div>
+                        
+                        <!-- Step Navigation Buttons -->
+                        <div style="display: flex; gap: 15px; justify-content: center; margin-bottom: 20px; flex-wrap: wrap;">
+                            <button class="neon-button small" onclick="autoPlaySteps()" id="autoPlayBtn">
+                                <i class="fas fa-play"></i> Auto-play Steps
+                            </button>
+                            <button class="neon-button small" onclick="exportSteps()">
+                                <i class="fas fa-download"></i> Export Steps
+                            </button>
+                            <button class="neon-button small" onclick="resetSteps()">
+                                <i class="fas fa-redo"></i> Reset
+                            </button>
+                        </div>
+                        
+                        <!-- Step History -->
+                        <!-- <div style="margin-top: 20px;">
+                            <h4 style="color: var(--cyber-blue); margin-bottom: 10px;">
+                                <i class="fas fa-history"></i> Step History
+                            </h4>
+                            <div class="step-history" id="stepHistory" style="background: rgba(13, 27, 62, 0.8); border: 1px solid var(--cyber-blue); border-radius: 8px; padding: 10px; max-height: 200px; overflow-y: auto;"></div>
+                        </div> -->
+                    </div>
+                                       
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel - Controls (Only for RAG tab) -->
+        <div class="right-panel" id="rightPanel">
+            <!-- Resource Management -->
+            <div class="panel-section">
+                <h3><i class="fas fa-cogs"></i> RESOURCE MANAGEMENT</h3>
+                <div class="simulation-inputs">
+                    <div class="input-group">
+                        <label><i class="fas fa-microchip"></i> Process ID</label>
+                        <select id="processId">
+                            <option value="P1">P1</option>
+                            <option value="P2">P2</option>
+                            <option value="P3">P3</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label><i class="fas fa-database"></i> Resource ID</label>
+                        <select id="resourceId">
+                            <option value="R1">R1</option>
+                            <option value="R2">R2</option>
+                        </select>
+                    </div>
+                    <div class="input-group" style="grid-column: span 2;">
+                        <label><i class="fas fa-layer-group"></i> Instances</label>
+                        <input type="number" id="requestInstances" value="1" min="1" max="3">
+                    </div>
+                </div>
+                
+                <!-- Resource Instance Controls -->
+                <div style="margin-top: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div class="input-group">
+                        <label>Resource Instances:</label>
+                        <select id="resourceInstanceSelect" onchange="updateResourceInstances()">
+                            <option value="R1">R1</option>
+                            <option value="R2">R2</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>New Count:</label>
+                        <input type="number" id="resourceInstanceCount" value="1" min="1" max="5">
+                    </div>
+                </div>
+                <button class="neon-button" style="margin-top: 10px;" onclick="changeResourceInstances()">
+                    <i class="fas fa-exchange-alt"></i> Update Instances
+                </button>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="panel-section">
+                <h3><i class="fas fa-play-circle"></i> ACTIONS</h3>
+                <div class="control-buttons">
+                    <button class="neon-button" onclick="requestResource()">
+                        <i class="fas fa-hand-paper"></i> Request Resource
+                    </button>
+                    <button class="neon-button" onclick="releaseResource()">
+                        <i class="fas fa-hand-rock"></i> Release Resource
+                    </button>
+                    <button class="neon-button" onclick="terminateProcess()">
+                        <i class="fas fa-skull-crossbones"></i> Terminate Process
+                    </button>
+                </div>
+                <div style="font-size: 11px; color: #00ffff; margin-top: 10px; text-align: center;">
+                    <i class="fas fa-info-circle"></i> Request allocates if available, else creates request edge
+                </div>
+            </div>
+
+            <!-- Prevention Controls -->
+            <div class="panel-section">
+                <h3><i class="fas fa-lock"></i> PREVENTION CONTROLS</h3>
+                <div style="display: flex; flex-direction: column; gap: 15px;">
+                    <label class="radio-label">
+                        <input type="checkbox" id="preventCircularWait" onchange="toggleCircularWait()">
+                        <i class="fas fa-sync-alt"></i> Prevent Circular Wait
+                    </label>
+                    <div class="input-group">
+                        <label><i class="fas fa-sort-amount-down"></i> Resource Order:</label>
+                        <input type="text" id="resourceOrder" placeholder="R1,R2,R3">
+                    </div>
+                    <button class="neon-button" onclick="applyResourceOrder()">
+                        <i class="fas fa-check"></i> Apply Order
+                    </button>
+                </div>
+            </div>
+
+            <!-- System Information -->
+            <div class="panel-section">
+                <h3><i class="fas fa-info-circle"></i> SYSTEM INFORMATION</h3>
+                <div id="systemInfo" style="color: white; font-size: 12px; line-height: 1.5;">
+                    Processes: 3<br>
+                    Resources: 2<br>
+                    Edges: 3<br>
+                    State: Safe
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Panel - Log -->
+        <div class="bottom-panel" id="bottomPanel">
+            <h3><i class="fas fa-clipboard-list"></i> LOG</h3>
+            <div class="log-content" id="logContent">
+                System initialized...<br>
+                Ready to simulate deadlock scenarios.
+            </div>
+            <div style="display: flex; gap: 10px; margin-top: 10px;">
+                <button class="neon-button small" onclick="clearLog()">
+                    <i class="fas fa-trash"></i> Clear Log
+                </button>
+                <button class="neon-button small" onclick="testEdgeCreation()">
+                    <i class="fas fa-vial"></i> Test Edge Creation
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Decoration Star -->
+    <div class="decoration-star"></div>
+    
+    <!-- Audio elements -->
+    <audio id="normal-sound" preload="auto">
+        <source src="Sci Fi UI Sounds.mp3" type="audio/mpeg">
+    </audio>
+
+    <audio id="deadlock-alarm-sound" preload="auto">
+        <source src="alarm2.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Deadlock Overlay -->
+    <div id="deadlockOverlay" class="alarm-overlay"></div>
+
+    <script src="intro.js"></script>
+    <script src="rag.js"></script>
+    <script src="banker.js"></script>
+</body>
+</html>

@@ -1,0 +1,1448 @@
+/* ========== BANKER'S ALGORITHM LAYOUT ========== */
+
+/* Full width for Banker's Algorithm tab */
+.main-container.banker-mode {
+    grid-template-columns: 1fr;
+}
+
+.main-container.banker-mode .left-panel,
+.main-container.banker-mode .right-panel {
+    display: none;
+}
+
+.main-container.banker-mode .center-panel {
+    grid-column: 1 / -1;
+}
+
+.main-container.banker-mode .bottom-panel {
+    grid-column: 1 / -1;
+}
+
+/* Banker's Container Full Width */
+.main-container.banker-mode .banker-container {
+    max-width: none;
+    margin: 0 auto;
+    padding: 20px;
+    background: var(--cyber-panel);
+    border: 2px solid var(--cyber-blue);
+    border-radius: 10px;
+    box-shadow: 0 0 25px rgba(0, 255, 255, 0.2);
+}
+
+/* Banker's Matrix Improvements */
+.matrix-header {
+    display: grid;
+    grid-template-columns: 100px repeat(auto-fit, minmax(80px, 1fr));
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.matrix-row {
+    display: grid;
+    grid-template-columns: 100px repeat(auto-fit, minmax(80px, 1fr));
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.matrix-cell {
+    padding: 12px;
+    text-align: center;
+    border: 1px solid var(--cyber-blue);
+    background: rgba(0, 255, 255, 0.1);
+    color: white;
+    font-size: 14px;
+    border-radius: 6px;
+    font-family: 'Courier New', monospace;
+    position: relative; /* For value change indicators */
+    transition: all 0.3s ease;
+}
+
+.matrix-cell.process {
+    background: rgba(0, 255, 255, 0.2);
+    font-weight: bold;
+    font-family: 'Orbitron', monospace;
+}
+
+.matrix-cell input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    color: white;
+    text-align: center;
+    font-size: 14px;
+    font-family: 'Courier New', monospace;
+    padding: 5px;
+}
+
+.matrix-cell input:focus {
+    outline: none;
+    background: rgba(0, 255, 255, 0.2);
+    border-radius: 3px;
+}
+
+/* Banker's Matrix Container */
+.matrix-container {
+    background: rgba(13, 27, 62, 0.7);
+    border: 2px solid var(--cyber-blue);
+    border-radius: 10px;
+    padding: 25px;
+    margin-top: 25px;
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.1);
+}
+
+/* Banker's Container */
+.banker-container {
+    background: var(--cyber-panel);
+    border: 2px solid var(--cyber-blue);
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 0 25px rgba(0, 255, 255, 0.2);
+}
+
+.banker-container h3 {
+    color: var(--cyber-blue);
+    margin-bottom: 20px;
+    border-bottom: 1px solid rgba(0, 255, 255, 0.3);
+    padding-bottom: 10px;
+    font-family: 'Orbitron', monospace;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Results */
+/*
+#safetyResult {
+    padding: 15px;
+    border-radius: 5px;
+    margin-top: 15px;
+    font-weight: bold;
+    text-align: center;
+    font-family: 'Orbitron', monospace;
+}
+
+#safetyResult.safe {
+    background: rgba(0, 255, 0, 0.2);
+    border: 1px solid var(--cyber-green);
+    color: var(--cyber-green);
+}
+
+#safetyResult.unsafe {
+    background: rgba(255, 0, 0, 0.2);
+    border: 1px solid var(--cyber-red);
+    color: var(--cyber-red);
+}
+
+#safeSequence {
+    padding: 10px;
+    background: rgba(0, 255, 255, 0.1);
+    border-radius: 5px;
+    margin-top: 10px;
+    text-align: center;
+    font-size: 14px;
+    color: var(--cyber-blue);
+    font-family: 'Courier New', monospace;
+}
+
+/* ========== STEP CONTROLS ========== */
+.step-controls {
+    background: rgba(13, 27, 62, 0.9);
+    border: 2px solid var(--cyber-blue);
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px 0;
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+}
+
+.step-info {
+    color: var(--cyber-blue);
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    text-align: center;
+    font-family: 'Orbitron', monospace;
+}
+
+.step-navigation {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+}
+
+.step-navigation button {
+    min-width: 120px;
+}
+
+.step-navigation button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+.step-navigation button:disabled:hover {
+    box-shadow: 0 0 15px rgba(0, 170, 255, 0.4) !important;
+}
+
+.step-description {
+    background: rgba(0, 255, 255, 0.1);
+    border: 1px solid var(--cyber-blue);
+    border-radius: 8px;
+    padding: 15px;
+    color: white;
+    font-size: 14px;
+    line-height: 1.5;
+    text-align: center;
+}
+
+/* Process-specific highlight colors */
+.process-p1-highlight .highlight { background: rgba(255, 51, 51, 0.3) !important; }
+.process-p2-highlight .highlight { background: rgba(255, 153, 0, 0.3) !important; }
+.process-p3-highlight .highlight { background: rgba(0, 204, 102, 0.3) !important; }
+.process-p4-highlight .highlight { background: rgba(153, 102, 255, 0.3) !important; }
+.process-p5-highlight .highlight { background: rgba(0, 204, 255, 0.3) !important; }
+
+/* ========== WORK VECTOR DISPLAY ========== */
+.work-display {
+    background: rgba(0, 0, 0, 0.5);
+    border: 2px solid var(--cyber-green);
+    border-radius: 10px;
+    padding: 15px;
+    margin: 15px 0;
+}
+
+.work-display h4 {
+    color: var(--cyber-green);
+    margin-bottom: 10px;
+    font-family: 'Orbitron', monospace;
+}
+
+.work-value {
+    background: rgba(0, 255, 0, 0.2);
+    border: 1px solid var(--cyber-green);
+    border-radius: 5px;
+    padding: 10px 20px;
+    color: white;
+    font-family: 'Courier New', monospace;
+    font-size: 16px;
+    min-width: 60px;
+    text-align: center;
+}
+
+.work-value.highlight {
+    animation: workHighlight 1s infinite alternate;
+    background: rgba(0, 255, 0, 0.4);
+}
+
+@keyframes workHighlight {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 5px var(--cyber-green);
+    }
+    100% {
+        transform: scale(1.1);
+        box-shadow: 0 0 15px var(--cyber-green);
+    }
+}
+
+/* ========== STEP HISTORY ========== */
+.step-history {
+    background: rgba(13, 27, 62, 0.8);
+    border: 1px solid var(--cyber-blue);
+    border-radius: 8px;
+    padding: 10px;
+    max-height: 200px;
+    overflow-y: auto;
+    margin-top: 10px;
+}
+
+.step-history-item {
+    padding: 8px;
+    margin: 5px 0;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 12px;
+}
+
+.step-history-item:hover {
+    background: rgba(0, 255, 255, 0.1);
+    transform: translateX(5px);
+}
+
+.step-history-item.active {
+    background: rgba(0, 255, 255, 0.2);
+    border-left: 3px solid var(--cyber-blue);
+}
+
+.step-history-step {
+    color: var(--cyber-blue);
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.step-history-title {
+    color: white;
+}
+
+/* ========== ENHANCED MATRIX DISPLAY ========== */
+.matrix-container.enhanced {
+    background: rgba(13, 27, 62, 0.9);
+    border: 2px solid var(--cyber-blue);
+    border-radius: 10px;
+    padding: 20px;
+    margin: 15px 0;
+    position: relative;
+}
+
+.matrix-title {
+    color: var(--cyber-blue);
+    font-size: 16px;
+    margin-bottom: 15px;
+    font-family: 'Orbitron', monospace;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.matrix-status {
+    font-size: 12px;
+    color: #aaa;
+}
+
+/* Value change animations */
+.value-change {
+    position: relative;
+}
+
+.value-change.updated::after {
+    content: '↻';
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: #ff9900;
+    color: black;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    font-size: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: updateSpin 0.5s ease;
+}
+
+@keyframes updateSpin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Resource columns highlighting */
+.resource-column.highlight {
+    background: rgba(0, 255, 255, 0.1) !important;
+}
+
+/* ========== CALCULATION FORMULA DISPLAY ========== */
+.calculation-formula {
+    margin: 15px 0;
+    padding: 12px;
+    background: rgba(0, 255, 255, 0.1);
+    border: 1px solid var(--cyber-blue);
+    border-radius: 8px;
+    font-family: 'Courier New', monospace;
+    color: var(--cyber-yellow);
+    text-align: center;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.calculation-formula i {
+    margin-right: 8px;
+}
+
+/* ========== VALUE CHANGES DISPLAY ========== */
+.value-changes {
+    margin: 10px 0;
+    padding: 10px;
+    background: rgba(255, 153, 0, 0.1);
+    border: 1px solid var(--cyber-orange);
+    border-radius: 8px;
+    font-size: 13px;
+    color: var(--cyber-orange);
+    line-height: 1.4;
+}
+
+.value-changes div {
+    margin: 3px 0;
+    padding-left: 10px;
+    position: relative;
+}
+
+.value-changes div::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--cyber-yellow);
+}
+
+/* ========== MATRIX VALUE UPDATES ========== */
+.value-updated {
+    animation: valueUpdate 1s ease;
+    position: relative;
+}
+
+@keyframes valueUpdate {
+    0% { 
+        transform: scale(1);
+        box-shadow: 0 0 5px var(--cyber-orange);
+    }
+    50% { 
+        transform: scale(1.05);
+        box-shadow: 0 0 15px var(--cyber-orange);
+    }
+    100% { 
+        transform: scale(1);
+        box-shadow: 0 0 5px var(--cyber-orange);
+    }
+}
+
+/* Value change indicator */
+.matrix-cell .value-change-indicator {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: var(--cyber-orange);
+    color: black;
+    font-size: 9px;
+    padding: 2px 4px;
+    border-radius: 3px;
+    animation: indicatorFade 2s ease-out;
+    z-index: 10;
+}
+
+@keyframes indicatorFade {
+    0% { opacity: 1; }
+    70% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+/* ========== FORMULA SYNTAX HIGHLIGHTING ========== */
+.formula-process {
+    color: var(--cyber-purple);
+    font-weight: bold;
+}
+
+.formula-resource {
+    color: var(--cyber-green);
+    font-weight: bold;
+}
+
+.formula-keyword {
+    color: var(--cyber-blue);
+    font-weight: bold;
+}
+
+.formula-operator {
+    color: var(--cyber-yellow);
+    font-weight: bold;
+}
+
+.formula-number {
+    color: var(--cyber-orange);
+    font-weight: bold;
+}
+
+.formula-success {
+    color: #00ff00;
+    font-weight: bold;
+}
+
+.formula-failure {
+    color: #ff3333;
+    font-weight: bold;
+}
+
+/* Step details */
+.step-detail-item {
+    margin: 5px 0;
+    padding: 5px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 3px;
+    font-size: 12px;
+}
+
+.step-detail-item.main-detail {
+    background: rgba(0, 255, 255, 0.1);
+    border-left: 2px solid var(--cyber-blue);
+    font-weight: bold;
+}
+
+.step-detail-item.sub-detail {
+    background: rgba(255, 255, 255, 0.02);
+    padding-left: 15px;
+    font-size: 11px;
+    color: #ccc;
+}
+
+/* Value changes */
+.value-change-item {
+    margin: 3px 0;
+    padding-left: 15px;
+    position: relative;
+    font-size: 11px;
+}
+
+.value-change-item::before {
+    content: '↻';
+    position: absolute;
+    left: 0;
+    color: var(--cyber-orange);
+    font-size: 10px;
+}
+
+.no-changes {
+    color: #aaa;
+    font-style: italic;
+    font-size: 10px;
+    text-align: center;
+    padding: 5px;
+}
+
+/* Safety result styling */
+#safetyResult.safe, #safetyResult.unsafe {
+    padding: 15px;
+    border-radius: 8px;
+    margin: 15px 0;
+}
+
+#safetyResult.safe {
+    background: rgba(0, 255, 0, 0.1);
+    border: 2px solid var(--cyber-green);
+}
+
+#safetyResult.unsafe {
+    background: rgba(255, 51, 51, 0.1);
+    border: 2px solid var(--cyber-red);
+}
+
+/* ========== CALCULATION DISPLAY ========== */
+.calculation-display {
+    background: rgba(0, 0, 0, 0.5);
+    border: 2px solid var(--cyber-purple);
+    border-radius: 10px;
+    padding: 15px;
+    margin: 20px 0;
+    transition: all 0.3s ease;
+}
+
+.calculation-display h4 {
+    color: var(--cyber-purple);
+    margin-bottom: 10px;
+    font-family: 'Orbitron', monospace;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* Current Calculation Box */
+.current-calculation {
+    margin-bottom: 15px;
+    padding: 10px;
+    background: rgba(185, 103, 255, 0.1);
+    border-radius: 5px;
+    border-left: 3px solid var(--cyber-purple);
+}
+
+.calculation-steps {
+    background: rgba(0, 255, 255, 0.05);
+    border: 1px solid var(--cyber-blue);
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+/* Work Vector Section */
+.work-vector-section {
+    margin-top: 15px;
+    border-top: 1px solid rgba(0, 255, 255, 0.2);
+    padding-top: 10px;
+}
+
+.work-values {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    color: white;
+}
+
+.work-value-box {
+    background: rgba(0, 255, 0, 0.1);
+    border: 1px solid var(--cyber-green);
+    border-radius: 5px;
+    padding: 8px 15px;
+    min-width: 50px;
+    text-align: center;
+    position: relative;
+    transition: all 0.3s ease;
+    font-family: 'Courier New', monospace;
+}
+
+.work-value-box.value-updating {
+    animation: valueUpdate 1.5s ease;
+    background: rgba(255, 153, 0, 0.3);
+    border-color: var(--cyber-orange);
+}
+
+.work-value-number {
+    font-weight: bold;
+    font-size: 16px;
+}
+
+/* Value change display in work boxes */
+.value-change-display {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+.old-value {
+    color: #aaa;
+    text-decoration: line-through;
+    font-size: 12px;
+}
+
+.change-arrow {
+    color: var(--cyber-blue);
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.new-value {
+    color: var(--cyber-green);
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.resource-label {
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--cyber-bg);
+    color: var(--cyber-green);
+    font-size: 10px;
+    padding: 0 5px;
+    white-space: nowrap;
+    font-family: 'Rajdhani', sans-serif;
+}
+
+.step-visualization {
+    background: var(--cyber-panel);
+    border: 2px solid var(--cyber-blue);
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 30px;
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+}
+
+.step-visualization h3 {
+    color: var(--cyber-blue);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Orbitron', monospace;
+}
+
+/* ========== STEP HISTORY SECTION ========== */
+.step-history-section {
+    margin-top: 20px;
+}
+
+.step-history-section h4 {
+    color: var(--cyber-blue);
+    margin-bottom: 10px;
+    font-family: 'Orbitron', monospace;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.value-changes-section {
+    margin-top: 15px;
+}
+
+.value-changes-section > div:first-child {
+    color: var(--cyber-green);
+    font-size: 12px;
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+/* ========== ENHANCED STEP VISUALIZATION ========== */
+.step-details-container {
+    display: none; /* This is causing the extra panel */
+}
+
+.step-details-section {
+    margin: 15px 0;
+}
+
+.step-details-section h4 {
+    color: var(--cyber-blue);
+    margin-bottom: 15px;
+    font-family: 'Orbitron', monospace;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid rgba(0, 255, 255, 0.3);
+    padding-bottom: 8px;
+}
+
+.step-details-section h5 {
+    color: var(--cyber-green);
+    margin: 15px 0 10px 0;
+    font-family: 'Orbitron', monospace;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+}
+
+.step-description-box {
+    background: rgba(0, 255, 255, 0.1);
+    border: 1px solid var(--cyber-blue);
+    border-radius: 8px;
+    padding: 15px;
+    color: white;
+    font-size: 14px;
+    line-height: 1.5;
+    margin-bottom: 15px;
+}
+
+/* Calculations Display */
+.calculation-list {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    padding: 10px;
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+.calculation-item {
+    padding: 8px;
+    margin: 5px 0;
+    background: rgba(185, 103, 255, 0.1);
+    border-left: 3px solid var(--cyber-purple);
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    color: #e6e6ff;
+    line-height: 1.4;
+}
+
+.calculation-item:nth-child(even) {
+    background: rgba(0, 255, 255, 0.1);
+    border-left-color: var(--cyber-blue);
+}
+
+/* Value Changes Display */
+.value-changes-list {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    padding: 10px;
+}
+
+.value-change-item {
+    padding: 8px;
+    margin: 5px 0;
+    background: rgba(255, 153, 0, 0.1);
+    border-left: 3px solid var(--cyber-orange);
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    color: #fff0e6;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.value-change-item::before {
+    content: '↻';
+    color: var(--cyber-orange);
+    font-weight: bold;
+}
+
+/* Formula Display */
+.formula-display {
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid var(--cyber-yellow);
+    border-radius: 8px;
+    padding: 15px;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    color: var(--cyber-yellow);
+    text-align: center;
+    line-height: 1.6;
+}
+
+/* Work Calculation Explanation */
+.work-calculation-explanation {
+    background: rgba(0, 255, 0, 0.1);
+    border: 1px solid var(--cyber-green);
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 15px;
+}
+
+.work-formula-title {
+    color: var(--cyber-green);
+    font-weight: bold;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Orbitron', monospace;
+    font-size: 14px;
+}
+
+.work-formula {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 6px;
+    padding: 10px;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    color: #ccffcc;
+    margin-bottom: 10px;
+}
+
+.work-values-display {
+    background: rgba(0, 255, 255, 0.1);
+    border-radius: 6px;
+    padding: 10px;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    color: white;
+    text-align: center;
+}
+
+/* Matrix animations */
+@keyframes matrixUpdate {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.matrix-cell.updating {
+    animation: matrixUpdate 1s ease;
+}
+
+/* Enhanced Formula Formatting */
+.formula-variable {
+    color: #ff6666;
+    font-weight: bold;
+}
+
+.formula-operator {
+    color: #66ff66;
+    font-weight: bold;
+}
+
+.formula-value {
+    color: #ffff66;
+    font-weight: bold;
+}
+
+.formula-result {
+    color: #ff9966;
+    font-weight: bold;
+}
+
+/* Step-by-step Process Box */
+.process-step-box {
+    background: rgba(0, 0, 0, 0.5);
+    border: 2px solid var(--cyber-purple);
+    border-radius: 10px;
+    padding: 20px;
+    margin: 15px 0;
+    position: relative;
+}
+
+.process-step-number {
+    position: absolute;
+    top: -15px;
+    left: 20px;
+    background: var(--cyber-purple);
+    color: white;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-family: 'Orbitron', monospace;
+}
+
+.process-step-title {
+    color: var(--cyber-purple);
+    font-size: 16px;
+    margin-bottom: 10px;
+    font-family: 'Orbitron', monospace;
+}
+
+.process-step-content {
+    color: white;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+/* Progress Indicator */
+.progress-indicator {
+    width: 100%;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+    margin: 10px 0;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--cyber-blue), var(--cyber-green));
+    border-radius: 2px;
+    transition: width 0.5s ease;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 1400px) {
+    .main-container {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto auto;
+    }
+    
+    .graph-circle {
+        width: 500px;
+        height: 500px;
+    }
+    
+    .main-container.banker-mode {
+        grid-template-rows: auto auto;
+    }
+    
+    .main-container.banker-mode .center-panel {
+        grid-row: 1;
+    }
+    
+    .main-container.banker-mode .bottom-panel {
+        grid-row: 2;
+    }
+}
+
+@media (max-width: 768px) {
+    .graph-circle {
+        width: 400px;
+        height: 400px;
+    }
+    
+    .main-container {
+        padding: 10px;
+    }
+    
+    .matrix-header {
+        grid-template-columns: 80px repeat(auto-fit, minmax(60px, 1fr));
+        gap: 5px;
+    }
+    
+    .matrix-row {
+        grid-template-columns: 80px repeat(auto-fit, minmax(60px, 1fr));
+        gap: 5px;
+    }
+    
+    .matrix-cell {
+        padding: 8px;
+        font-size: 12px;
+    }
+    
+    .step-navigation {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .step-navigation button {
+        width: 100%;
+        max-width: 200px;
+    }
+    
+    .work-values {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .work-value-box {
+        width: 80%;
+    }
+    
+    .step-details-container {
+        padding: 15px;
+        margin: 15px 0;
+    }
+    
+    .calculation-item,
+    .value-change-item,
+    .work-formula {
+        font-size: 12px;
+        padding: 6px;
+    }
+    
+    .formula-display {
+        font-size: 12px;
+        padding: 10px;
+    }
+    
+    .key-items {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ========== ADDITIONAL ANIMATIONS ========== */
+@keyframes pulse-animation {
+    0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7); }
+    70% { box-shadow: 0 0 0 10px rgba(255, 255, 255, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+}
+
+.pulse-animation {
+    animation: pulse-animation 1s;
+}
+
+@keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+.cyber-notification {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    z-index: 1001;
+    border-radius: 5px;
+    padding: 10px 15px;
+    color: white;
+    font-family: 'Rajdhani', sans-serif;
+    animation: slideIn 0.3s ease;
+}
+
+.cyber-notification.success {
+    background: rgba(0, 255, 0, 0.2);
+    border: 1px solid #00ff00;
+}
+
+.cyber-notification.info {
+    background: rgba(0, 170, 255, 0.2);
+    border: 1px solid #00aaff;
+}
+
+.main-container.banker-mode .bottom-panel .neon-button[onclick="testEdgeCreation()"] {
+    display: none !important;
+}
+
+/* Add to your banker.css */
+.request-inputs .input-group {
+    margin-bottom: 15px;
+}
+
+.request-inputs .input-group label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 5px;
+    color: var(--cyber-blue);
+    font-weight: bold;
+}
+
+.cyber-input {
+    width: 100%;
+    padding: 10px;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--cyber-blue);
+    color: white;
+    border-radius: 4px;
+    font-family: 'Rajdhani', sans-serif;
+}
+
+.cyber-input:focus {
+    outline: none;
+    border-color: var(--cyber-green);
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+}
+
+.resource-info {
+    font-size: 11px;
+    color: #aaa;
+    margin-top: 3px;
+    font-style: italic;
+}
+
+.resource-detail {
+    font-size: 12px;
+    padding: 5px;
+    background: rgba(185, 103, 255, 0.1);
+    border-radius: 4px;
+    margin-bottom: 5px;
+    border-left: 3px solid var(--cyber-purple);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .request-controls {
+        grid-template-columns: 1fr !important;
+        gap: 15px !important;
+    }
+    
+    #requestResourcesInputs {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+/* Add to banker.css */
+#requestResourcesInputs {
+    max-height: 300px;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+#requestResourcesInputs::-webkit-scrollbar {
+    width: 5px;
+}
+
+#requestResourcesInputs::-webkit-scrollbar-track {
+    background: rgba(0,0,0,0.2);
+    border-radius: 3px;
+}
+
+#requestResourcesInputs::-webkit-scrollbar-thumb {
+    background: var(--cyber-blue);
+    border-radius: 3px;
+}
+
+.resource-detail {
+    font-size: 11px;
+    color: #aaa;
+    margin-top: 5px;
+    padding: 3px 5px;
+    background: rgba(0,0,0,0.2);
+    border-radius: 3px;
+    border-left: 2px solid var(--cyber-purple);
+}
+
+.resource-detail div {
+    margin: 2px 0;
+}
+
+/* Better grid layout for many resources */
+@media (min-width: 768px) {
+    #requestResourcesInputs {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)) !important;
+    }
+}
+
+@media (max-width: 768px) {
+    #requestResourcesInputs {
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)) !important;
+    }
+}
+
+/* Ensure the request section scales properly */
+.request-inputs {
+    min-height: 200px;
+}
+
+/* Button colors for better visual distinction */
+.banker-controls button.neon-button {
+    background: linear-gradient(135deg, var(--cyber-blue), #0066cc);
+}
+
+/* First row: Apply Configuration */
+.banker-controls > div:nth-of-type(2) .neon-button:nth-child(1) {
+    background: linear-gradient(135deg, var(--cyber-blue), #0066cc);
+}
+
+.banker-controls > div:nth-of-type(2) .neon-button:nth-child(2) {
+    background: linear-gradient(135deg, var(--cyber-purple), #6600cc);
+}
+
+/* Second row: Calculate Need, Run Safety Algorithm, Show Request Algorithm */
+.banker-controls > div:nth-of-type(3) .neon-button:nth-child(1) {
+    background: linear-gradient(135deg, #00ccff, #0066cc);
+}
+
+.banker-controls > div:nth-of-type(3) .neon-button:nth-child(2) {
+    background: linear-gradient(135deg, var(--cyber-green), #006633);
+}
+
+.banker-controls > div:nth-of-type(3) .neon-button:nth-child(3) {
+    background: linear-gradient(135deg, #ff9900, #cc6600);
+}
+
+/* Hover effects for all buttons */
+.banker-controls .neon-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+}
+
+/* Active/pressed state */
+.banker-controls .neon-button:active {
+    transform: translateY(0);
+}
+
+/* For the toggle button when request section is shown */
+#toggleRequestBtn.hide-mode {
+    background: linear-gradient(135deg, #ff3333, #cc0000) !important;
+}
+
+#toggleRequestBtn.hide-mode:hover {
+    background: linear-gradient(135deg, #ff5555, #dd2222) !important;
+    box-shadow: 0 0 20px rgba(255, 0, 0, 0.4);
+}
+
+/* ========== BANKER STATUS HEADER ========== */
+.banker-status-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    padding: 15px 20px;
+    margin: -20px -20px 20px -20px;
+    border-radius: 10px 10px 0 0;
+    text-align: center;
+    font-family: 'Orbitron', monospace;
+    font-size: 20px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    transition: all 0.5s ease;
+}
+
+.banker-status-header.safe {
+    background: linear-gradient(135deg, rgba(0, 255, 0, 0.15), rgba(0, 100, 0, 0.15));
+    border-bottom: 3px solid var(--cyber-green);
+    color: var(--cyber-green);
+    text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+}
+
+.banker-status-header.unsafe {
+    background: linear-gradient(135deg, rgba(255, 0, 0, 0.15), rgba(100, 0, 0, 0.15));
+    border-bottom: 3px solid var(--cyber-red);
+    color: var(--cyber-red);
+    text-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+}
+
+.banker-status-header .status-icon {
+    font-size: 24px;
+    animation: statusPulse 2s infinite;
+}
+
+@keyframes statusPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+/* ========== CONTAINER BOUNDARY EFFECTS ========== */
+.banker-container.safe-state {
+    border-color: var(--cyber-green) !important;
+    box-shadow: 
+        0 0 25px rgba(0, 255, 0, 0.4),
+        inset 0 0 15px rgba(0, 255, 0, 0.2);
+}
+
+.banker-container.unsafe-state {
+    animation: unsafeGlow 1s infinite alternate;
+    border-color: var(--cyber-red) !important;
+}
+
+@keyframes unsafeGlow {
+    0% {
+        box-shadow: 
+            0 0 15px rgba(255, 0, 0, 0.3),
+            inset 0 0 10px rgba(255, 0, 0, 0.1);
+    }
+    100% {
+        box-shadow: 
+            0 0 35px rgba(255, 0, 0, 0.6),
+            0 0 50px rgba(255, 0, 0, 0.4),
+            inset 0 0 20px rgba(255, 0, 0, 0.2);
+    }
+}
+
+/* ========== STATUS ANIMATIONS ========== */
+.status-appear {
+    animation: statusAppear 0.5s ease-out;
+}
+
+@keyframes statusAppear {
+    0% {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ========== UNSAFE STATE WARNING ========== */
+.unsafe-warning {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    background: rgba(0, 0, 0, 0.9);
+    padding: 30px;
+    border: 3px solid var(--cyber-red);
+    border-radius: 15px;
+    text-align: center;
+    animation: warningPulse 2s infinite;
+    display: none;
+}
+
+.unsafe-warning.active {
+    display: block;
+}
+
+@keyframes warningPulse {
+    0% {
+        box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
+    }
+    50% {
+        box-shadow: 0 0 40px rgba(255, 0, 0, 0.6);
+    }
+    100% {
+        box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
+    }
+}
+
+.unsafe-warning-content {
+    color: white;
+    font-family: 'Orbitron', monospace;
+    font-size: 18px;
+}
+
+.unsafe-warning-content i {
+    color: var(--cyber-red);
+    font-size: 36px;
+    margin-bottom: 15px;
+}
+
+/* ========== SAFE SEQUENCE DISPLAY ========== */
+.safe-sequence-display {
+    margin-top: 20px;
+    padding: 15px;
+    background: rgba(0, 255, 0, 0.1);
+    border: 2px solid var(--cyber-green);
+    border-radius: 8px;
+    text-align: center;
+    font-family: 'Orbitron', monospace;
+    color: var(--cyber-green);
+    display: none;
+}
+
+.safe-sequence-display.active {
+    display: block;
+    animation: slideInDown 0.5s ease-out;
+}
+
+@keyframes slideInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.safe-sequence-display h4 {
+    color: var(--cyber-green);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.sequence-flow {
+    font-size: 24px;
+    font-weight: bold;
+    color: #00ff00;
+    text-shadow: 0 0 10px #00ff00;
+    margin: 10px 0;
+}
+
+/* ========== RESPONSIVE ADJUSTMENTS ========== */
+@media (max-width: 768px) {
+    .banker-status-header {
+        font-size: 16px;
+        padding: 10px 15px;
+        gap: 10px;
+    }
+    
+    .banker-status-header .status-icon {
+        font-size: 20px;
+    }
+    
+    .unsafe-warning-content {
+        font-size: 14px;
+    }
+    
+    .safe-sequence-display {
+        padding: 10px;
+    }
+    
+    .sequence-flow {
+        font-size: 18px;
+    }
+}
+
+/* Hide any empty containers that might be showing */
+.banker-container > div:empty,
+.step-visualization > div:empty {
+    display: none !important;
+    height: 0 !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+}
+
+/* Specifically target any panel with neon blue boundary that might be empty */
+[class*="panel"]:empty,
+[class*="section"]:empty,
+[class*="container"]:empty {
+    display: none !important;
+}
+
+/* Hide any borders/glows from empty containers */
+.banker-container .banker-container:empty,
+.banker-container .matrix-container:empty {
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+}
