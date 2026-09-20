@@ -176,7 +176,7 @@ When process Pᵢ requests `Request[i]`:
 
 **Ayesha Nawaz**  
 Operating Systems — University Project  
-Built with ❤️ using pure HTML, CSS & JavaScript
+Built using HTML, CSS & JavaScript
 
 ---
 
