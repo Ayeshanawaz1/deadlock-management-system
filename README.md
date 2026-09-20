@@ -172,12 +172,14 @@ When process Pᵢ requests `Request[i]`:
 
 ---
 
-## 👩‍💻 Author
-
-**Ayesha Nawaz**  
+## 👩‍💻 Authors
+ 
+**Ayesha Nawaz Khan**  
 Operating Systems — University Project  
 Built using HTML, CSS & JavaScript
 
+**Muhammad Umar**
+(https://github.com/Muhammad-UmarX)
 ---
 
 ## 📜 License
