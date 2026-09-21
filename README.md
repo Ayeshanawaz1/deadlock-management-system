@@ -2,9 +2,8 @@
 
 > **Operating Systems — University Project**
 > An interactive, browser-based simulation of OS deadlock detection and prevention algorithms.
-> 
-Operating Systems — University Project  
-Built using HTML, CSS & JavaScript
+> Built using HTML, CSS & JavaScript  
+
 
 ---
 
