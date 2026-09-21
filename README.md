@@ -1,7 +1,10 @@
 # 🔒 Deadlock Management System
 
-> **Operating Systems — University Project**  
+> **Operating Systems — University Project**
 > An interactive, browser-based simulation of OS deadlock detection and prevention algorithms.
+> 
+Operating Systems — University Project  
+Built using HTML, CSS & JavaScript
 
 ---
 
@@ -179,8 +182,6 @@ When process Pᵢ requests `Request[i]`:
 **Muhammad Umar Saeed**
 (https://github.com/Muhammad-UmarX)
 
-Operating Systems — University Project  
-Built using HTML, CSS & JavaScript
 ---
 
 ## 📜 License
