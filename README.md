@@ -178,7 +178,7 @@ When process Pᵢ requests `Request[i]`:
 Operating Systems — University Project  
 Built using HTML, CSS & JavaScript
 
-**Muhammad Umar**
+**Muhammad Umar Saeed**
 (https://github.com/Muhammad-UmarX)
 ---
 
